@@ -1,0 +1,6 @@
+- name: Ana Sayfa
+  link: /
+- name: Hakkımızda
+  link: /hakkimizda.html
+- name: Takımımız
+  link: /takimimiz.html

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="tr-TR" data-theme="mytheme">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page.title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link
+            href="https://cdn.jsdelivr.net/npm/daisyui@4.12.19/dist/full.min.css"
+            rel="stylesheet"
+            type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#a6d623',
+                    }
+                }
+            },
+            daisyui: {
+                themes: [
+                    {
+                        mytheme: {
+                            "primary": "#a6d623",
+                            "background": "#13242c",
+                            "accent": "#88c000",
+                            "neutral": "#3d4451",
+                            "base-100": "#ffffff",
+                        },
+                    },
+                    "dark",
+                    "cupcake",
+                ],
+            },
+        }
+    </script>
+</head>
+<body>
+    {% include navigation.html %}
+    <div class="min-h-screen">
+        {{ content }}
+    </div>
+    {% include footer.html %}
+</body>
+</html>
