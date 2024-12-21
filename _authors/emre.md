@@ -1,4 +1,5 @@
 ---
+layout: author
 short_name: emre
 name: Emre Kayık
 position: Yazılım Geliştirici

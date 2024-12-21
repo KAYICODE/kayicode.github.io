@@ -6,7 +6,7 @@ layout: default
 <div class="flex items-center gap-x-3">
     <div class="avatar placeholder size-20 shrink-0">
         <div class="bg-neutral text-neutral-content rounded-full shrink-0">
-            <span class="text-3xl">EK</span>
+            <span class="text-3xl">{{ page.name | split: " " | first | truncate: 2}}</span>
         </div>
     </div>
 
