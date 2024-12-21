@@ -1,6 +1,7 @@
 ---
 layout: location
 title: Bilecik
+img: /assets/img/locations/bilecik/bilecikmerkez.jpg
 ---
 
 Bilecik, Bilecik ilinin merkezi olan şehir. Türkiye'nin Marmara Bölgesi'nin Güney Marmara Bölümü'nde kalmaktadır. 
