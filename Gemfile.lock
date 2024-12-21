@@ -69,7 +69,7 @@ PLATFORMS
   x64-mingw-ucrt
 
 DEPENDENCIES
-  jekyll
+  jekyll (~> 4.2)
   wdm (>= 0.1.0)
 
 BUNDLED WITH

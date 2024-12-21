@@ -22,6 +22,9 @@
                 <li>
                     <a href="{{ item.link }}" {% if page.url == item.link %}class="text-primary"{% endif %}>
                         {{ item.name }}
+                        {% if item.name == "Yerler" %}
+                            <span class="size-1.5 inline-block rounded-full bg-primary animate-ping"></span>
+                        {% endif %}
                     </a>
                 </li>
                 {% endfor %}

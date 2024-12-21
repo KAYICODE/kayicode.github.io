@@ -1,5 +1,7 @@
 - name: Ana Sayfa
   link: /
+- name: Yerler
+  link: /yerler.html
 - name: Hakkımızda
   link: /hakkimizda.html
 - name: Takımımız
