@@ -21,5 +21,6 @@ Bu dönemde yerleşim, dokuz Müslüman ve bir Hristiyan olmak üzere 10 mahalle
 Coğrafi konumu nedeniyle tarım yapılamayan yerleşim, bu tarihlerde demir madenciliği ve ipek dokumacılığı yönüyle gelişmişti. 
 Osmanlı idaresinde uzun süre Sultanönü sancağına bağlı bir kaza olarak görülen yerleşim, Tanzimat'tan sonra Hüdavendigâr eyaletine bağlı bir sancak oldu. 
 II. Abdülhamid döneminde Ertuğrul sancağının merkez kazası Bilecik, Cumhuriyet'in ilk yıllarında vilâyet oldu. 
-1924 yılında vilâyetin adı Bilecik'e çevrildi. 
+1924 yılında vilâyetin adı Bilecik'e çevrildi. [deneme](https://example.com) 
 
+> sa

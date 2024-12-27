@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="tr-TR" data-theme="mytheme">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>{{ page.title }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link
             href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
             rel="stylesheet"
@@ -23,7 +23,19 @@
                 extend: {
                     colors: {
                         primary: '#a6d623',
-                    }
+                    },
+                    typography: {
+                        DEFAULT: {
+                            css: {
+                                a: {
+                                    color: '#3182ce',
+                                    '&:hover': {
+                                        color: '#2c5282',
+                                    },
+                                },
+                            },
+                        }
+                    },
                 }
             },
             daisyui: {
@@ -44,11 +56,12 @@
         }
     </script>
 </head>
-<body>
-    {% include navigation.html %}
-    <div class="min-h-screen">
-        {{ content }}
-    </div>
-    {% include footer.html %}
+<body class="antialiased">
+{% include navigation.html %}
+<div class="min-h-screen mt-20">
+    {{ content }}
+</div>
+{% include footer.html %}
+<script src="/assets/js/main.js"></script>
 </body>
 </html>
