@@ -22,7 +22,7 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#a6d623',
+                        primary: '#FF7F50',
                     },
                     typography: {
                         DEFAULT: {
@@ -42,9 +42,9 @@
                 themes: [
                     {
                         mytheme: {
-                            "primary": "#a6d623",
+                            "primary": "#FF7F50",
                             "background": "#13242c",
-                            "accent": "#88c000",
+                            "accent": "#FF7F50",
                             "neutral": "#3d4451",
                             "base-100": "#ffffff",
                         },
@@ -55,6 +55,14 @@
             },
         }
     </script>
+    <script type="importmap">
+    {
+        "imports": {
+        "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 <body class="antialiased">
 {% include navigation.html %}
@@ -62,6 +70,7 @@
     {{ content }}
 </div>
 {% include footer.html %}
+<script type="module" src="/assets/js/three.js"></script>
 <script src="/assets/js/main.js"></script>
 </body>
 </html>
