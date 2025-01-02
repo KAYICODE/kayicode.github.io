@@ -3,9 +3,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.addEventListener("scroll", () => {
         if (window.scrollY > 50) {
-            navbar.classList.add("bg-primary", "text-white", "shadow-md", "backdrop-blur-md");
+            navbar.classList.add("bg-primary", "text-white", "shadow-xl", "backdrop-blur-md");
         } else {
-            navbar.classList.remove("bg-primary", "text-white", "shadow-md", "backdrop-blur-md");
+            navbar.classList.remove("bg-primary", "text-white", "shadow-xl", "backdrop-blur-md");
         }
     });
 });
