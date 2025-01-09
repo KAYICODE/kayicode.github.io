@@ -24,3 +24,9 @@ II. Abdülhamid döneminde Ertuğrul sancağının merkez kazası Bilecik, Cumhu
 1924 yılında vilâyetin adı Bilecik'e çevrildi. [deneme](https://example.com) 
 
 > sa
+
+<div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 10px;">
+    <a href="/edebali" class="button" style="display: inline-block; padding: 10px 20px; background-color: #FF7F50; color: white; text-decoration: none; border-radius: 5px; text-align: center; flex: 1;">Şeyh Edebali Kimdir?</a>
+    <a href="#" class="button" style="display: inline-block; padding: 10px 20px; background-color: #FF7F50; color: white; text-decoration: none; border-radius: 5px; text-align: center; flex: 1;">Ertuğrul Gazi Kimdir?</a>
+    <a href="#" class="button" style="display: inline-block; padding: 10px 20px; background-color: #FF7F50; color: white; text-decoration: none; border-radius: 5px; text-align: center; flex: 1;">Osman Gazi Kimdir?</a>
+</div>
