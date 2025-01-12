@@ -1,0 +1,155 @@
+---
+layout: default
+title: Ebebali chat
+---
+
+<div class="max-w-4xl mx-auto p-4">
+    <!-- Chat Container -->
+    <div class="bg-white rounded-lg shadow-lg p-4 mb-4">
+        <div id="chat-messages" class="h-[500px] overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg">
+            <!-- Messages will be displayed here -->
+        </div>
+        
+        <!-- Input Form -->
+        <form id="chat-form" class="flex gap-2">
+            <input type="text" 
+                   id="user-input" 
+                   class="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                   placeholder="Mesajınızı yazın...">
+            <button type="submit" 
+                    class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors">
+                Gönder
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Sabit API anahtarı
+const apiKey = 'AIzaSyC8U5CZj7jIcXwOEY_PRn8xwXjGuwnTZP0';
+
+// Chat functionality
+const chatMessages = document.getElementById('chat-messages');
+const chatForm = document.getElementById('chat-form');
+const userInput = document.getElementById('user-input');
+
+// Ses efektleri
+const sendSound = new Audio('/assets/sounds/send.mp3');
+const receiveSound = new Audio('/assets/sounds/receive.mp3');
+
+// Konuşma ayarları
+const speechSynthesis = window.speechSynthesis;
+let speaking = false;
+
+function speak(text) {
+    // Eğer konuşma devam ediyorsa durdur
+    if (speaking) {
+        speechSynthesis.cancel();
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'tr-TR'; // Türkçe dil
+    utterance.rate = 0.9; // Konuşma hızı (biraz yavaş)
+    utterance.pitch = 0.9; // Ses tonu (biraz kalın)
+    utterance.volume = 1.0; // Ses seviyesi
+
+    // Konuşma durumunu takip et
+    utterance.onstart = () => { speaking = true; };
+    utterance.onend = () => { speaking = false; };
+    utterance.onerror = () => { speaking = false; };
+
+    speechSynthesis.speak(utterance);
+}
+
+// AI Kişiliği ve Sistem Mesajı
+const systemMessage = `Sen Şeyh Edebali'sin, Osmanlı İmparatorluğu'nun kuruluş döneminin en önemli manevi önderlerindensin.
+
+UZMANLIK ALANLARIN:
+- Osmanlı İmparatorluğu'nun kuruluş dönemi (1299-1326)
+- 13. yüzyıl Anadolu'sunun sosyal ve kültürel yapısı
+- İslam felsefesi ve tasavvuf
+- Dönemin siyasi ve askeri tarihi
+- Osman Gazi dönemi
+- Ahilik teşkilatı ve esnaf kültürü
+
+KONUŞMA TARZI:
+- Bilgece ve derin bir üslup kullanırsın
+- Her zaman öğütler ve dersler içeren cevaplar verirsin
+- "Ey oğul!", "Evladım", "Aziz dostum" gibi hitaplar kullanırsın
+- Tarihi olayları anlatırken detaylı betimlemeler yaparsın
+- Ahlaki değerlere vurgu yaparsın
+
+ÖZEL BİLGİLER:
+- Osman Gazi'nin kayınpederisin
+- Bilecik'te bir zaviye kurmuşsun
+- "İnsanı yaşat ki devlet yaşasın" düsturunun sahibisin
+- Osman Gazi'ye verdiğin öğütler meşhurdur
+- Ahilik teşkilatının önde gelen isimlerindensin
+
+Her cevabında mutlaka tarihi bir ders veya ahlaki bir öğüt vermeye çalışırsın. Modern konulardan bahsedildiğinde bile tarihten örnekler vererek cevap verirsin.`;
+
+// Sayfa yüklendiğinde hoşgeldin mesajı
+window.addEventListener('load', () => {
+    const welcomeMessage = "Ey aziz dostlarım! Ben Şeyh Edebali. Osmanlı'nın kuruluş döneminin manevi önderi olarak size yol göstermeye hazırım. 'İnsanı yaşat ki devlet yaşasın' düsturuyla sizlere rehberlik etmek için buradayım. Ne öğrenmek istersiniz?";
+    addMessageToChat('ai', welcomeMessage);
+    speak(welcomeMessage);
+});
+
+async function sendMessage(message) {
+    addMessageToChat('user', message);
+    sendSound.play();
+
+    try {
+        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + apiKey, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: systemMessage + "\n\nKullanıcı: " + message
+                    }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates[0].content) {
+            const aiResponse = data.candidates[0].content.parts[0].text;
+            addMessageToChat('ai', aiResponse);
+            receiveSound.play();
+            speak(aiResponse); // AI yanıtını seslendir
+        } else {
+            throw new Error('API yanıt vermedi');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        addMessageToChat('error', 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
+    }
+}
+
+function addMessageToChat(sender, message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `mb-4 p-3 rounded-lg ${
+        sender === 'user' 
+            ? 'bg-primary text-white ml-auto' 
+            : sender === 'ai' 
+                ? 'bg-gray-200 text-gray-800' 
+                : 'bg-red-100 text-red-800'
+    } max-w-[80%]`;
+    messageDiv.textContent = message;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = userInput.value.trim();
+    if (message) {
+        sendMessage(message);
+        userInput.value = '';
+    }
+});
+</script>
