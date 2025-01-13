@@ -49,8 +49,8 @@ function speak(text) {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'tr-TR'; // Türkçe dil
-    utterance.rate = 0.9; // Konuşma hızı (biraz yavaş)
-    utterance.pitch = 0.9; // Ses tonu (biraz kalın)
+    utterance.rate = 0.85; // Konuşma hızı (daha yavaş)
+    utterance.pitch = 0.6; // Ses tonu (daha kalın)Y
     utterance.volume = 1.0; // Ses seviyesi
 
     // Konuşma durumunu takip et
@@ -59,6 +59,19 @@ function speak(text) {
     utterance.onerror = () => { speaking = false; };
 
     speechSynthesis.speak(utterance);
+}
+
+// API anahtarını .env dosyasından al
+async function getApiKey() {
+    try {
+        const response = await fetch('/.env');
+        const text = await response.text();
+        const match = text.match(/GEMINI_API_KEY=(.+)/);
+        return match ? match[1].trim() : null;
+    } catch (error) {
+        console.error('API anahtarı yüklenemedi:', error);
+        return null;
+    }
 }
 
 // AI Kişiliği ve Sistem Mesajı
@@ -95,11 +108,17 @@ window.addEventListener('load', () => {
     speak(welcomeMessage);
 });
 
+// Mesaj gönderme fonksiyonu
 async function sendMessage(message) {
     addMessageToChat('user', message);
     sendSound.play();
 
     try {
+        const apiKey = await getApiKey();
+        if (!apiKey) {
+            throw new Error('API anahtarı bulunamadı');
+        }
+
         const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + apiKey, {
             method: 'POST',
             headers: {
@@ -120,7 +139,7 @@ async function sendMessage(message) {
             const aiResponse = data.candidates[0].content.parts[0].text;
             addMessageToChat('ai', aiResponse);
             receiveSound.play();
-            speak(aiResponse); // AI yanıtını seslendir
+            speak(aiResponse);
         } else {
             throw new Error('API yanıt vermedi');
         }
