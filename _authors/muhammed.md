@@ -2,8 +2,8 @@
 short_name: muhammed
 name: Muhammed Muslu
 position: Modelleme
-github: https://github.com/mmuslu
-instagram: https://instagram.com/mmusllu
+github: mmuslu
+instagram: mmusllu
 mail: mmuslu0207@gmail.com
 ---
 

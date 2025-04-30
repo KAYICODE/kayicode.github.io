@@ -1,10 +1,11 @@
 - name: Ana Sayfa
   link: /
-- name: Yerler
-  link: /yerler.html
+- name: Projelerimiz
+  link: /projelerimiz.html
 - name: Hakkımızda
   link: /hakkimizda.html
-- name: Takımımız
-  link: /takimimiz.html
-- name: Şeyh Edebali Chat
-  link: /gemini.html
+- name: Ekibimiz
+  link: /ekibimiz.html
+
+#- name: Şeyh Edebali Chat
+#  link: /gemini.html
