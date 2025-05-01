@@ -1,33 +1,82 @@
-import * as THREE from 'three';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+import Stats from 'three/examples/jsm/libs/stats.module'
 
-// Scene, Camera ve Renderer oluşturma
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById('model-container').appendChild(renderer.domElement);
+const scene = new THREE.Scene()
+scene.add(new THREE.AxesHelper(5))
 
-// Işık ekleme
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(1, 1, 1).normalize();
-scene.add(light);
+const light = new THREE.PointLight(0xffffff, 50)
+light.position.set(0.8, 1.4, 1.0)
+scene.add(light)
 
-const loader = new GLTFLoader();
-loader.load('/assets/models/logo.glb', function (gltf) {
-    scene.add(gltf.scene);
-    gltf.position.set(100, 100, 100);
-    gltf.scale.set(0.1, 0.01, 0.01);
-}, undefined, function (error) {
-    console.error(error);
-});
+const ambientLight = new THREE.AmbientLight()
+scene.add(ambientLight)
 
-camera.position.z = 5;
+const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+)
+camera.position.set(0.8, 1.4, 1.0)
 
-// Animasyon döngüsü
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+const renderer = new THREE.WebGLRenderer()
+renderer.setSize(window.innerWidth, window.innerHeight)
+document.body.appendChild(renderer.domElement)
+
+const controls = new OrbitControls(camera, renderer.domElement)
+controls.enableDamping = true
+controls.target.set(0, 1, 0)
+
+//const material = new THREE.MeshNormalMaterial()
+
+const fbxLoader = new FBXLoader()
+fbxLoader.load(
+    '/assets/models/ertugrulgazi.fbx',
+    (object) => {
+        // object.traverse(function (child) {
+        //     if ((child as THREE.Mesh).isMesh) {
+        //         // (child as THREE.Mesh).material = material
+        //         if ((child as THREE.Mesh).material) {
+        //             ((child as THREE.Mesh).material as THREE.MeshBasicMaterial).transparent = false
+        //         }
+        //     }
+        // })
+        // object.scale.set(.01, .01, .01)
+        scene.add(object)
+    },
+    (xhr) => {
+        console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+    },
+    (error) => {
+        console.log(error)
+    }
+)
+
+window.addEventListener('resize', onWindowResize, false)
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    render()
 }
 
-animate();
+const stats = new Stats()
+document.body.appendChild(stats.dom)
+
+function animate() {
+    requestAnimationFrame(animate)
+
+    controls.update()
+
+    render()
+
+    stats.update()
+}
+
+function render() {
+    renderer.render(scene, camera)
+}
+
+animate()
