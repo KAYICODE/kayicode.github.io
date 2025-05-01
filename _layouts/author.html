@@ -26,26 +26,27 @@ layout: default
     <div class="mt-8">
         <article class="prose">
             {{ content }}
+            <hr class="my-8">
+            <h3>İletişim Kanalları</h3>
+            <ul class="mt-5 flex flex-col gap-y-3">
+                {%- for social in site.data.social -%}
+                {%- assign key = social[0] -%}
+                {%- assign settings = social[1] -%}
+
+                {%- if page[key] -%}
+                <li class="flex items-center gap-x-2.5 text-primary">
+                    <i class="{{ settings.icon }}"></i>
+                    <a href="{{ settings.prefix }}{{ page[key] }}"
+                       class="text-[13px] underline hover:decoration-2 focus:outline-none focus:decoration-2"
+                       target="_blank"
+                    >
+                        {{ page[key] }}
+                    </a>
+                </li>
+                {%- endif -%}
+                {%- endfor -%}
+            </ul>
         </article>
-
-        <ul class="mt-5 flex flex-col gap-y-3">
-            {%- for social in site.data.social -%}
-            {%- assign key = social[0] -%}
-            {%- assign settings = social[1] -%}
-
-            {%- if page[key] -%}
-            <li class="flex items-center gap-x-2.5 text-primary">
-                <i class="{{ settings.icon }}"></i>
-                <a href="{{ settings.prefix }}{{ page[key] }}"
-                   class="text-[13px] underline hover:decoration-2 focus:outline-none focus:decoration-2"
-                    target="_blank"
-                >
-                    {{ page[key] }}
-                </a>
-            </li>
-            {%- endif -%}
-            {%- endfor -%}
-        </ul>
     </div>
 </article>
 <!--

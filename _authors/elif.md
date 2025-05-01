@@ -6,6 +6,7 @@ position: Yazılım Geliştirici
 github: myelifs
 instagram: myelifs
 mail: melif0661@gmail.com
+priority: 50
 ---
 
-Merhaba ben Elif, bu projenin takım kaptanlığını ve yazılım geliştiremesini kontrol ediyorum.
+Merhaba ben Elif, yazılım geliştirmeden sorumluyum.

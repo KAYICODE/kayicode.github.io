@@ -4,7 +4,8 @@ name: Mustafa Yartaşı
 position: Takım Kaptanı | Modelleme
 github: MustafaYartasi
 instagram: mustafayartasii
-mail: Myartasiii@gmail.com
+mail: myartasiii@gmail.com
+priority: 80
 ---
 
 Merhaba ben Mustafa Yartaşı. Projede modellemeden sorumluyum.
