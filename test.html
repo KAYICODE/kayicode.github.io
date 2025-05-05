@@ -27,7 +27,7 @@ layout: default
     const scene = new THREE.Scene()
     scene.add(new THREE.AxesHelper(5))
 
-    const light = new THREE.PointLight(0xffffff, 50)
+    const light = new THREE.PointLight(0xffffff, 40)
     light.position.set(0.8, 1.4, 1.0)
     scene.add(light)
 
@@ -40,31 +40,33 @@ layout: default
         0.1,
         1000
     )
-    camera.position.set(0.8, 1.4, 1.0)
+    camera.position.set(0.8, 1.4, 2.0)
 
-    const renderer = new THREE.WebGLRenderer()
+    const renderer = new THREE.WebGLRenderer({
+        alpha: true,
+    })
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
 
     const controls = new OrbitControls(camera, renderer.domElement)
-    controls.enableDamping = true
+    controls.enableDamping = false
     controls.target.set(0, 1, 0)
 
     //const material = new THREE.MeshNormalMaterial()
 
     const fbxLoader = new FBXLoader()
     fbxLoader.load(
-        '/assets/models/ertugrulgazi.fbx',
+        '/assets/models/ertugrulbey.fbx',
         (object) => {
             // object.traverse(function (child) {
-            //     if ((child as THREE.Mesh).isMesh) {
-            //         // (child as THREE.Mesh).material = material
-            //         if ((child as THREE.Mesh).material) {
-            //             ((child as THREE.Mesh).material as THREE.MeshBasicMaterial).transparent = false
+            //     if ((child as three.mesh).ismesh) {
+            //         // (child as three.mesh).material = material
+            //         if ((child as three.mesh).material) {
+            //             ((child as three.mesh).material as three.meshbasicmaterial).transparent = false
             //         }
             //     }
             // })
-            // object.scale.set(.01, .01, .01)
+            object.scale.set(.01, .01, .01)
             scene.add(object)
         },
         (xhr) => {
