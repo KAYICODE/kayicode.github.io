@@ -3,14 +3,18 @@ layout: default
 ---
 
 <article class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto prose">
-    <div class="flex items-center gap-x-3">
-        <div class="avatar placeholder size-20 shrink-0">
-            <div class="rounded-full bg-neutral text-neutral-content w-24">
+    <div class="flex items-center gap-x-3 flex flex-col items-center justify-center">
+        <div class="avatar placeholder">
+            <div class="w-48 rounded-full">
+                <img src="/assets/img/authors/{{ page.short_name }}.jpg" class=""/>
+            </div>
+            <!-- <div class="rounded-full bg-neutral text-neutral-content w-24">
                 <span class="text-3xl">
                     {% assign name_parts = page.name | split: ' ' %}
                     {% for part in name_parts %}{{ part | slice: 0, 1 | join: '' }}{% endfor %}
                 </span>
             </div>
+            -->
         </div>
 
         <div class="grow">
@@ -23,7 +27,7 @@ layout: default
         </div>
     </div>
 
-    <div class="mt-8">
+    <div class="mt-8 flex flex-col items-center justify-center">
         <article class="prose">
             {{ content }}
             <hr class="my-8">
