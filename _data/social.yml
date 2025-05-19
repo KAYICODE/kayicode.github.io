@@ -13,3 +13,6 @@ x:
 mail:
   icon: "ai-envelope"
   prefix: "mailto:"
+location:
+  icon: "ai-location"
+  prefix: ""
