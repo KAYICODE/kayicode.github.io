@@ -2,7 +2,7 @@
 layout: author
 short_name: mustafa
 name: Mustafa Yartaşı
-position: Takım Kaptanı | Modelleme
+position: "Koordinasyon | Modelleme"
 github: MustafaYartasi
 instagram: mustafayartasii
 mail: myartasiii@gmail.com
