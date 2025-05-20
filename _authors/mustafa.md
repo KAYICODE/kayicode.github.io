@@ -5,6 +5,7 @@ name: Mustafa Yartaşı
 position: "Koordinasyon | Modelleme"
 github: MustafaYartasi
 instagram: mustafayartasii
+linkedin: mustafa-yarta%C5%9F%C4%B1-aba520232
 mail: myartasiii@gmail.com
 priority: 80
 ---

@@ -24,32 +24,29 @@ layout: default
             <p class="text-sm text-gray-600 dark:text-neutral-400">
                 {{ page.position }}
             </p>
-        </div>
-    </div>
-
-    <div class="mt-8 flex flex-col items-center justify-center">
-        <article class="prose">
-            {{ content }}
-            <hr class="my-8">
-            <h3>İletişim Kanalları</h3>
-            <ul class="mt-5 flex flex-col gap-y-3">
+            <ul class="mt-5 flex gap-x-3">
                 {%- for social in site.data.social -%}
                 {%- assign key = social[0] -%}
                 {%- assign settings = social[1] -%}
 
                 {%- if page[key] -%}
                 <li class="flex items-center gap-x-2.5 text-primary">
-                    <i class="{{ settings.icon }}"></i>
                     <a href="{{ settings.prefix }}{{ page[key] }}"
-                       class="text-[13px] underline hover:decoration-2 focus:outline-none focus:decoration-2"
+                       class="text-[24px] text-primary no-underline"
                        target="_blank"
                     >
-                        {{ page[key] }}
+                        <i class="{{ settings.icon }}"></i>
                     </a>
                 </li>
                 {%- endif -%}
                 {%- endfor -%}
             </ul>
+        </div>
+    </div>
+
+    <div class="mt-8 flex flex-col items-center justify-center">
+        <article class="prose">
+            {{ content }}
         </article>
     </div>
 </article>

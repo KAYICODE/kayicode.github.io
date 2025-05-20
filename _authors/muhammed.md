@@ -5,6 +5,7 @@ name: Muhammed Muslu
 position: Modelleme
 github: mmuslu
 instagram: mmusllu
+linkedin: muhammed-muslu-97a5a12b2
 mail: mmuslu0207@gmail.com
 priority: 50
 ---
