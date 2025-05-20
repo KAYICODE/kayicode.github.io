@@ -1,174 +1,287 @@
 ---
 layout: default
-title: Ebebali chat
+title:  Ertuğrul Gazi ile Hasbihal
 ---
 
-<div class="max-w-4xl mx-auto p-4">
-    <!-- Chat Container -->
-    <div class="bg-white rounded-lg shadow-lg p-4 mb-4">
-        <div id="chat-messages" class="h-[500px] overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg">
-            <!-- Messages will be displayed here -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js" integrity="sha512-rPuOZPx/WHMHNx2RoALKwiCDiDrCo4ekUctyTYKzBo8NGA79NcTW2gfrbcCL2RYL7RdjX2v9zR0fKyI4U4kPew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .chat-container {
+            height: calc(100vh - 180px);
+        }
+        .message {
+            max-width: 80%;
+            margin: 8px;
+            padding: 12px;
+            border-radius: 12px;
+        }
+        .user-message {
+            background-color: #2563eb;
+            color: white;
+            margin-left: auto;
+        }
+        .ai-message {
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .error-message {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .voice-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .voice-button {
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .voice-button:hover {
+            opacity: 0.8;
+        }
+        .voice-button.active {
+            background-color: #2563eb;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4 max-w-4xl">
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            <h1 class="text-2xl font-bold text-center mb-4">Ertuğrul Gazi Chat</h1>
+            <div class="voice-controls">
+                <button id="speakButton" class="voice-button bg-blue-500 text-white">
+                    <span>🔊 Sesli Yanıt</span>
+                </button>
+                <button id="listenButton" class="voice-button bg-green-500 text-white">
+                    <span>🎤 Sesli Giriş</span>
+                </button>
+            </div>
+            <div id="chat-messages" class="chat-container overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg">
+                <!-- Mesajlar buraya gelecek -->
+            </div>
+            <form id="chat-form" class="flex gap-2">
+                <input type="text" 
+                       id="user-input" 
+                       class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                       placeholder="Mesajınızı yazın...">
+                <button type="submit" 
+                        class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                    Gönder
+                </button>
+            </form>
         </div>
-        
-        <!-- Input Form -->
-        <form id="chat-form" class="flex gap-2">
-            <input type="text" 
-                   id="user-input" 
-                   class="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
-                   placeholder="Mesajınızı yazın...">
-            <button type="submit" 
-                    class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors">
-                Gönder
-            </button>
-        </form>
     </div>
-</div>
 
-<script>
-// Sabit API anahtarı
-const apiKey = 'AIzaSyC8U5CZj7jIcXwOEY_PRn8xwXjGuwnTZP0';
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai";
 
-// Chat functionality
-const chatMessages = document.getElementById('chat-messages');
-const chatForm = document.getElementById('chat-form');
-const userInput = document.getElementById('user-input');
+        const API_KEY = 'AIzaSyCYZwm0QJesG_NzDKwSclY6N2PLDdXFKHc';
 
-// Ses efektleri
-const sendSound = new Audio('/assets/sounds/send.mp3');
-const receiveSound = new Audio('/assets/sounds/receive.mp3');
+        const SYSTEM_PROMPT = `Sen Ertuğrul Gazisin. Osmanlı Devleti'nin kurucusu Osman Bey'in babası ve Kayı boyunun beyisin.
 
-// Konuşma ayarları
-const speechSynthesis = window.speechSynthesis;
-let speaking = false;
+KİŞİSEL BİLGİLER:
+- Babası: Gündüz Alp (Süleyman Şah değil, bu tarihsel olarak yanlıştır)
+- Doğum: XIII. yüzyıl başları
+- Vefat: 680/1281-82 (yaklaşık 90 yaşında)
+- Türbe: Bilecik ili Söğüt ilçesi, Söğüt-Bilecik yolu üzerinde
+- Mensup olduğu boy: Kayı (Oğuzlar'ın hükümdar çıkaran beş boyundan biri)
 
-function speak(text) {
-    // Eğer konuşma devam ediyorsa durdur
-    if (speaking) {
-        speechSynthesis.cancel();
-    }
+TARİHİ ROLÜ VE BAŞARILARI:
+1. Selçuklu Dönemi:
+   - Alaeddin Keykubad döneminde Selçuklu ordusuna yardım etti
+   - Yassıçimen Savaşı'nda (1230) Moğollara karşı Selçuklulara destek verdi
+   - Karacadağ ve çevresi kendisine yurt olarak verildi
+   - Eskişehir ve çevresi kendisine ikta edildi
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'tr-TR'; // Türkçe dil
-    utterance.rate = 0.85; // Konuşma hızı (daha yavaş)
-    utterance.pitch = 0.6; // Ses tonu (daha kalın)
-    utterance.volume = 1.0; // Ses seviyesi
+2. Uç Beyliği Dönemi:
+   - Söğüt ve çevresine yerleşti
+   - Bizans sınırında uç beyi olarak görev yaptı
+   - Karacahisar'ı fethetti (629/1231-32)
+   - Bilecik ve Osmaneli tekfurlarıyla iyi ilişkiler kurdu
 
-    // Konuşma durumunu takip et
-    utterance.onstart = () => { speaking = true; };
-    utterance.onend = () => { speaking = false; };
-    utterance.onerror = () => { speaking = false; };
+3. Siyasi ve Askeri Faaliyetleri:
+   - Bizans sınırlarında akınlar düzenledi
+   - Akçakoca, Samsa Çavuş, Kara Tegin gibi uç beylerini etrafında topladı
+   - Kayı aşiretini güçlendirdi ve büyüttü
+   - Oğlu Osman Bey'e beyliği devretti
 
-    speechSynthesis.speak(utterance);
-}
+KONUŞMA TARZI VE ÜSLUP:
+1. Dinî ve Manevî İfadeler:
+   - "Bismillahirrahmanirrahim" - Her işin başında
+   - "Hamd olsun" - Şükür ifadesi
+   - "İnşallah/Maşallah" - İnancı yansıtan ifadeler
+   - "Hak/Hak yol" - Adalet ve doğruluk vurgusu
+   - "Ferman Allah'ındır" - İlahi takdir
 
-// API anahtarını .env dosyasından al
-async function getApiKey() {
-    try {
-        const response = await fetch('/.env');
-        const text = await response.text();
-        const match = text.match(/GEMINI_API_KEY=(.+)/);
-        return match ? match[1].trim() : null;
-    } catch (error) {
-        console.error('API anahtarı yüklenemedi:', error);
-        return null;
-    }
-}
+2. Töre ve Ahlâk Dili:
+   - "Töre/Töremiz" - Gelenek ve kurallar
+   - "Yiğitlik/Cesaret" - Kahramanlık vurgusu
+   - "Sadakat/Liyakat" - Değer yargıları
+   - "İzzet/Onur" - Şeref ve haysiyet
 
-// AI Kişiliği ve Sistem Mesajı
-const systemMessage = `Sen Şeyh Edebali'sin, Osmanlı İmparatorluğu'nun kuruluş döneminin en önemli manevi önderlerindensin.
+3. Savaş ve Strateji Dili:
+   - "Cenk/Gazâ" - Savaş ve mücadele
+   - "Alp/Bey" - Liderlik ve komutanlık
+   - "Can verilir, yurt verilmez" - Vatan sevgisi
+   - "Ölürsek şehit, kalırsak gazi" - Fedakarlık
 
-UZMANLIK ALANLARIN:
-- Osmanlı İmparatorluğu'nun kuruluş dönemi (1299-1326)
-- 13. yüzyıl Anadolu'sunun sosyal ve kültürel yapısı
-- İslam felsefesi ve tasavvuf
-- Dönemin siyasi ve askeri tarihi
-- Osman Gazi dönemi
-- Ahilik teşkilatı ve esnaf kültürü
+4. Hitabet Kalıpları:
+   - "Ey yiğitlerim..."
+   - "Ey beyler, iyi dinleyin!"
+   - "Evvela şunu bilesiniz ki..."
+   - "Biz bu yola baş koyduk"
+   - "Yolumuz hak yolu, davamız kutlu davadır"
 
-KONUŞMA TARZI:
-- Bilgece ve derin bir üslup kullanırsın
-- Her zaman öğütler ve dersler içeren cevaplar verirsin
-- "Ey oğul!", "Evladım", "Aziz dostum" gibi hitaplar kullanırsın
-- Tarihi olayları anlatırken detaylı betimlemeler yaparsın
-- Ahlaki değerlere vurgu yaparsın
+KONUŞMA KURALLARI:
+1. Her zaman töre ve ahlâk çerçevesinde konuş
+2. Dinî ve manevî değerlere saygılı ol
+3. Adalet ve hakkaniyeti vurgula
+4. Tarihi gerçeklere bağlı kal
+5. Liderlik vasıflarını yansıt
+6. Cesaret ve yiğitliği ön plana çıkar
+7. Birlik ve beraberliği vurgula
+8. Gelecek nesillere öğüt ver
 
 ÖZEL BİLGİLER:
-- Osman Gazi'nin kayınpederisin
-- Bilecik'te bir zaviye kurmuşsun
-- "İnsanı yaşat ki devlet yaşasın" düsturunun sahibisin
-- Osman Gazi'ye verdiğin öğütler meşhurdur
-- Ahilik teşkilatının önde gelen isimlerindensin
+- Kayı boyunun beyi olarak görev yaptın
+- Selçuklu sultanlarına bağlılığını gösterdin
+- Bizans sınırında uç beyi olarak hizmet ettin
+- Oğlu Osman Bey'e beyliği devrettin
+- Türben Söğüt'te ziyaret edilmekte
+- Her yıl Söğüt'te şenlikler düzenlenmekte`;
 
-Her cevabında mutlaka tarihi bir ders veya ahlaki bir öğüt vermeye çalışırsın. Modern konulardan bahsedildiğinde bile tarihten örnekler vererek cevap verirsin.`;
-
-// Sayfa yüklendiğinde hoşgeldin mesajı
-window.addEventListener('load', () => {
-    const welcomeMessage = "Ey aziz dostlarım! Ben Şeyh Edebali. Osmanlı'nın kuruluş döneminin manevi önderi olarak size yol göstermeye hazırım. 'İnsanı yaşat ki devlet yaşasın' düsturuyla sizlere rehberlik etmek için buradayım. Ne öğrenmek istersiniz?";
-    addMessageToChat('ai', welcomeMessage);
-    speak(welcomeMessage);
-});
-
-// Mesaj gönderme fonksiyonu
-async function sendMessage(message) {
-    addMessageToChat('user', message);
-    sendSound.play();
-
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                contents: [{
-                    role: "user",
-                    parts: [{
-                        text: systemMessage + "\n\nKullanıcı: " + message
-                    }]
-                }]
-            })
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-1.5-flash",
+            generationConfig: {
+                temperature: 0.8,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 1024,
+            }
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        let chatHistory = [];
+
+        const chatMessages = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+
+        // Voice functionality
+        const speakButton = document.getElementById('speakButton');
+        const listenButton = document.getElementById('listenButton');
+        let isListening = false;
+        let recognition = null;
+
+        // Initialize speech recognition
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'tr-TR';
+
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                userInput.value = text;
+                sendMessage(text);
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                listenButton.classList.remove('active');
+            };
         }
 
-        const data = await response.json();
-        
-        if (data.candidates && data.candidates[0].content) {
-            const aiResponse = data.candidates[0].content.parts[0].text;
-            addMessageToChat('ai', aiResponse);
-            receiveSound.play();
-            speak(aiResponse);
-        } else {
-            throw new Error('API yanıt vermedi');
+        // Text to speech function
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'tr-TR';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                speechSynthesis.speak(utterance);
+            }
         }
-    } catch (error) {
-        console.error('Error:', error);
-        addMessageToChat('error', 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
-    }
-}
 
-function addMessageToChat(sender, message) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `mb-4 p-3 rounded-lg ${
-        sender === 'user' 
-            ? 'bg-primary text-white ml-auto' 
-            : sender === 'ai' 
-                ? 'bg-gray-200 text-gray-800' 
-                : 'bg-red-100 text-red-800'
-    } max-w-[80%]`;
-    messageDiv.textContent = message;
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
+        // Toggle listening
+        listenButton.addEventListener('click', () => {
+            if (!recognition) {
+                alert('Tarayıcınız ses tanıma özelliğini desteklemiyor.');
+                return;
+            }
 
-chatForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const message = userInput.value.trim();
-    if (message) {
-        sendMessage(message);
-        userInput.value = '';
-    }
-});
-</script>
+            if (!isListening) {
+                recognition.start();
+                isListening = true;
+                listenButton.classList.add('active');
+            } else {
+                recognition.stop();
+                isListening = false;
+                listenButton.classList.remove('active');
+            }
+        });
+
+        async function sendMessage(message) {
+            try {
+                addMessage('user', message);
+                chatHistory.push({ role: "user", parts: [{ text: message }] });
+
+                const chat = model.startChat({
+                    history: [
+                        { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+                        { role: "model", parts: [{ text: "Anladım, Ertuğrul Gazi olarak size yardımcı olacağım." }] },
+                        ...chatHistory
+                    ],
+                });
+
+                const result = await chat.sendMessage(message);
+                const aiResponse = result.response.text();
+                addMessage('ai', aiResponse);
+                chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+
+            } catch (error) {
+                console.error('Hata:', error);
+                addMessage('error', 'Üzgünüm, bir hata oluştu: ' + error.message);
+            }
+        }
+
+        function addMessage(type, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.innerHTML = marked.parse(text);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Always speak AI messages
+            if (type === 'ai') {
+                speakText(text);
+            }
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (message) {
+                userInput.value = '';
+                await sendMessage(message);
+            }
+        });
+
+        window.addEventListener('load', () => {
+            const welcomeMessage = "Bismillahirrahmanirrahim. Hamd, alemlerin Rabbi olan Allah'adır. Selâm olsun hakkı arayana, töreyi gözetene, mazlumu koruyana. Ben, Kayı boyundan Gündüz Alp oğlu Ertuğrul'um. Karanlık zamanda bir kıvılcım olmaya niyet ettim. Zira zulüm büyürse, adalet susarsa, beyliğin yüreği çürür. Bu yolda baş veririz, ama baş eğmeyiz. Zira hak bildiğimiz yoldan dönmek bize yakışmaz.";
+            addMessage('ai', welcomeMessage);
+            chatHistory.push({ role: "model", parts: [{ text: welcomeMessage }] });
+        });
+    </script>
+</body>
+</html>
