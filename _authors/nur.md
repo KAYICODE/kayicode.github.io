@@ -2,10 +2,11 @@
 layout: author
 short_name: nur
 name: Nur Kuban Torun
-position: Proje Yöneticisi
+position: Proje Yürütücüsü
 instagram: nur_kuban
+github: emrekayik
 mail: nurkuban.akdemir@bilecik.edu.tr
-linkedin: linkedin.com/in/nurkubantorun
+linkedin: nurkubantorun
 priority: 100
 ---
 
