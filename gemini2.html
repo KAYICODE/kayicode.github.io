@@ -1,0 +1,56 @@
+---
+layout: default
+title: KAYI Chat
+---
+
+<div class="max-w-xl mx-auto flex flex-col">
+    <textarea id="response" disabled class="textarea mt-2 text-primary flex-1">Modelden yanıt bekleniyor...</textarea>
+    <form id="chat-form" class="flex items-end justify-center w-full space-x-2">
+        <textarea class="textarea textarea-primary flex-1" id="prompt" placeholder="Sorunuzu yazın..." rows="6"></textarea>
+        <button class="btn btn-primary" type="submit">Gönder</button>
+    </form>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('chat-form');
+        const promptInput = document.getElementById('prompt');
+        const responsePre = document.getElementById('response');
+        const API_URL = 'https://5c5f-91-151-95-227.ngrok-free.app/api/generate';
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prompt = promptInput.value.trim();
+            if (!prompt) return;
+
+            responsePre.textContent = 'Yanıt alınıyor...';
+            form.querySelector('button').disabled = true;
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        model: 'llama3.1:8b',
+                        prompt,
+                        stream: false
+                    })
+                });
+
+                if (!res.ok) {
+                    throw new Error('Sunucu hatası: ' + res.status);
+                }
+
+                const data = await res.json();
+                responsePre.textContent = data.response || 'Yanıt boş geldi.';
+            } catch (err) {
+                responsePre.textContent = 'Hata: ' + err.message;
+            } finally {
+                form.querySelector('button').disabled = false;
+            }
+        });
+    });
+
+</script>
