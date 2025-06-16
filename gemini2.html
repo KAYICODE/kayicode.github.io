@@ -1,32 +1,357 @@
 ---
 layout: default
-title: KAYI Chat
+title: Ertuğrul Gazi ile Sohbet
 ---
 
-<div class="max-w-xl mx-auto flex flex-col">
-    <textarea id="response" disabled class="textarea mt-2 text-primary flex-1">Modelden yanıt bekleniyor...</textarea>
-    <form id="chat-form" class="flex items-end justify-center w-full space-x-2">
-        <textarea class="textarea textarea-primary flex-1" id="prompt" placeholder="Sorunuzu yazın..." rows="6"></textarea>
-        <button class="btn btn-primary" type="submit">Gönder</button>
-    </form>
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="bg-base-200 rounded-lg shadow-lg p-4">
+        <div class="flex flex-col items-center mb-6">
+            <h1 class="text-3xl font-bold text-center mb-2">Ertuğrul Gazi ile Sohbet</h1>
+            <p class="text-center text-base-content/70 mb-4">Kayı Boyu'nun Ulu Beyi</p>
+            <div class="flex items-center gap-2">
+                <label class="label cursor-pointer gap-2">
+                    <span class="label-text">Sesli Yanıt</span>
+                    <input type="checkbox" id="voice-toggle" class="toggle toggle-primary" checked />
+                </label>
+            </div>
+        </div>
+        
+        <!-- Chat History -->
+        <div id="chat-history" class="space-y-4 mb-4 max-h-[60vh] overflow-y-auto p-4 bg-base-100 rounded-lg">
+            <div class="message">
+                <div class="inline-block p-3 rounded-lg bg-primary/10">
+                    <p class="font-semibold mb-2">Selamun Aleyküm, yiğit!</p>
+                    <p>Ben Ertuğrul Gazi, Kayı Boyu'nun Ulu Beyi. Sana nasıl yardımcı olabilirim? Sorularını, dertlerini dinlemeye hazırım. Birlikte, atalarımızın yolunda ilerleyelim.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Response Area -->
+        <div id="response-container" class="mb-4 hidden">
+            <div class="bg-primary/10 p-4 rounded-lg">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="loading loading-spinner loading-sm"></div>
+                    <span class="text-sm text-primary">Yanıt alınıyor...</span>
+                </div>
+                <div id="response" class="text-primary"></div>
+            </div>
+        </div>
+
+        <!-- Input Form -->
+        <form id="chat-form" class="flex flex-col gap-2">
+            <div class="flex gap-2">
+                <textarea 
+                    id="prompt" 
+                    class="textarea textarea-primary flex-1 min-h-[100px]" 
+                    placeholder="Sorunuzu yazın..." 
+                    rows="3"
+                ></textarea>
+            </div>
+            <div class="flex justify-end">
+                <button 
+                    id="submit-btn"
+                    class="btn btn-primary gap-2" 
+                    type="submit"
+                >
+                    <span>Gönder</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
+<style>
+    .message {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
+    /* Ertuğrul Gazi theme */
+    .bg-primary {
+        background-color: #8B4513 !important; /* Earthy brown */
+    }
+    
+    .text-primary {
+        color: #8B4513 !important;
+    }
+    
+    .bg-primary\/10 {
+        background-color: rgba(139, 69, 19, 0.1) !important;
+    }
+
+    .btn-primary {
+        background-color: #8B4513 !important;
+        border-color: #8B4513 !important;
+    }
+
+    .btn-primary:hover {
+        background-color: #6B3410 !important;
+        border-color: #6B3410 !important;
+    }
+
+    .textarea-primary {
+        border-color: #8B4513 !important;
+    }
+
+    .textarea-primary:focus {
+        border-color: #6B3410 !important;
+        box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2) !important;
+    }
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('chat-form');
         const promptInput = document.getElementById('prompt');
-        const responsePre = document.getElementById('response');
+        const responseContainer = document.getElementById('response-container');
+        const responseDiv = document.getElementById('response');
+        const chatHistory = document.getElementById('chat-history');
+        const submitBtn = document.getElementById('submit-btn');
+        const voiceToggle = document.getElementById('voice-toggle');
         const API_URL = 'https://5c5f-91-151-95-227.ngrok-free.app/api/generate';
+        const GOOGLE_TTS_API_KEY = 'AIzaSyAj6HSp5fuVF2debPO-e7Okw9T_fOE8jN8';
+
+        // Speech synthesis setup
+        let speechSynthesis = window.speechSynthesis;
+        let voices = [];
+        let selectedVoice = null;
+
+        // Ertuğrul Gazi's expanded character information
+        const ertugrulCharacter = {
+            personalInfo: {
+                birth: "1191-1198",
+                death: "1281",
+                age: "90",
+                father: "Gündüz Alp",
+                mother: "Hayme Ana",
+                wife: "Halime Hatun",
+                children: ["Osman Gazi", "Gündüz Alp", "Savcı Bey"],
+                tribe: "Kayı Boyu",
+                title: "Kayı Boyu'nun Ulu Beyi"
+            },
+            characteristics: [
+                "Adaletli ve merhametli bir lider",
+                "Cesur ve yiğit bir savaşçı",
+                "Bilge ve ileri görüşlü bir devlet adamı",
+                "İslam'a bağlı, dindar bir Müslüman",
+                "Boyunu ve milletini seven bir önder",
+                "Stratejik düşünce yeteneği yüksek",
+                "Halkına karşı şefkatli ve koruyucu"
+            ],
+            historicalEvents: [
+                "Selçuklu Sultanı I. Alaeddin Keykubad döneminde uç beyi olarak görev yaptı",
+                "Kayı Boyu'nu Söğüt ve Domaniç yöresine yerleştirdi",
+                "Bizans sınırında boyunu ve milletini korudu",
+                "Osmanlı Devleti'nin temellerini attı"
+            ],
+            phrases: {
+                greetings: [
+                    "Selamun Aleyküm, yiğit!",
+                    "Hoş geldin, yiğit kardeşim!",
+                    "Selam olsun, yiğit!",
+                    "Allah'ın selamı üzerine olsun!",
+                    "Kayı Boyu'nun yiğitleri böyle düşünür!"
+                ],
+                thinking: [
+                    "Hmm, düşünelim...",
+                    "Bakalım, yiğit...",
+                    "Şöyle bir düşüneyim...",
+                    "Atalarımızın yolunda...",
+                    "Selçuklu Sultanımızın izinde..."
+                ],
+                confirmations: [
+                    "Evet, yiğit!",
+                    "Doğru söylersin!",
+                    "Haklısın, yiğit kardeşim!",
+                    "Öyle değil mi, yiğit?",
+                    "Kayı Boyu'nun yiğitleri böyle düşünür!"
+                ],
+                wisdom: [
+                    "Atalarımız der ki...",
+                    "Selçuklu Sultanımız bize öğretti ki...",
+                    "Kayı Boyu'nun töresi gereği...",
+                    "İslam'ın emrettiği üzere...",
+                    "Boyumuzun geleneklerine göre..."
+                ]
+            },
+            responses: {
+                aboutSelf: [
+                    "Ben Ertuğrul Gazi, Kayı Boyu'nun Ulu Beyiyim. Süleyman Şah'ın oğluyum ve Osman Gazi'nin babasıyım.",
+                    "Selçuklu Sultanı I. Alaeddin Keykubad'ın uç beyiyim. Boyumu ve milletimi korumak için buradayım.",
+                    "90 yıllık ömrümde, boyumu ve milletimi korumak için çalıştım. Şimdi de size yardımcı olmak için buradayım."
+                ],
+                aboutFamily: [
+                    "Halime Hatun, benim biricik eşimdir. Osman, Gündüz ve Savcı, yiğit oğullarımdır.",
+                    "Annem Hayme Ana, boyumuzun bilge kadınıdır. Onun öğütleriyle büyüdüm.",
+                    "Oğlum Osman, boyumuzun geleceğidir. Onunla gurur duyuyorum."
+                ],
+                aboutHistory: [
+                    "Selçuklu Sultanımız I. Alaeddin Keykubad bize bu toprakları yurt olarak verdi.",
+                    "Söğüt ve Domaniç yöresini boyumuza yurt edindik. Bu topraklar bizim vatanımızdır.",
+                    "Bizans sınırında boyumuzu koruyoruz. Bu, Selçuklu Sultanımızın bize verdiği kutsal bir görevdir."
+                ]
+            }
+        };
+
+        // Initialize voices with Ertuğrul Gazi settings
+        function initVoices() {
+            voices = speechSynthesis.getVoices();
+            selectedVoice = voices.find(voice => 
+                voice.lang.includes('tr-TR') && voice.name.toLowerCase().includes('male')
+            ) || voices.find(voice => 
+                voice.lang.includes('tr-TR')
+            ) || voices.find(voice => 
+                voice.lang.includes('tr') && voice.name.toLowerCase().includes('male')
+            ) || voices.find(voice => 
+                voice.lang.includes('tr')
+            ) || voices[0];
+
+            console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`));
+            console.log('Selected voice:', selectedVoice?.name);
+        }
+
+        // Handle voice loading
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = initVoices;
+        }
+        initVoices();
+
+        // Google Cloud TTS function
+        async function speakWithGoogleTTS(text) {
+            if (!voiceToggle.checked) return;
+
+            try {
+                const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${GOOGLE_TTS_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        input: { text },
+                        voice: {
+                            languageCode: 'tr-TR',
+                            name: 'tr-TR-Wavenet-B',
+                            ssmlGender: 'MALE'
+                        },
+                        audioConfig: {
+                            audioEncoding: 'MP3',
+                            pitch: -6.0,
+                            speakingRate: 0.8,
+                            volumeGainDb: 3.0
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('TTS API error: ' + response.status);
+                }
+
+                const data = await response.json();
+                const audioContent = data.audioContent;
+                
+                // Create and play audio
+                const audio = new Audio('data:audio/mp3;base64,' + audioContent);
+                submitBtn.disabled = true;
+                
+                audio.onended = () => {
+                    submitBtn.disabled = false;
+                };
+
+                audio.onerror = (error) => {
+                    console.error('Audio playback error:', error);
+                    submitBtn.disabled = false;
+                };
+
+                await audio.play();
+            } catch (error) {
+                console.error('TTS Error:', error);
+                // Fallback to browser's speech synthesis if Google TTS fails
+                fallbackSpeechSynthesis(text);
+            }
+        }
+
+        // Fallback to browser's speech synthesis
+        function fallbackSpeechSynthesis(text) {
+            if (!window.speechSynthesis) return;
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            
+            // Try to find Turkish voice
+            const turkishVoice = voices.find(voice => 
+                voice.lang.includes('tr-TR') && voice.name.toLowerCase().includes('male')
+            ) || voices.find(voice => 
+                voice.lang.includes('tr')
+            ) || voices[0];
+
+            utterance.voice = turkishVoice;
+            utterance.rate = 0.8;
+            utterance.pitch = 0.6;
+            utterance.volume = 1;
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Modify addMessage to use Google TTS
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'text-right' : ''}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = `inline-block p-3 rounded-lg ${
+                isUser ? 'bg-primary text-primary-content' : 'bg-base-300'
+            }`;
+
+            if (!isUser) {
+                // Add characteristic phrases and wisdom
+                if (Math.random() < 0.3) {
+                    const phrases = ertugrulCharacter.phrases.wisdom;
+                    content = phrases[Math.floor(Math.random() * phrases.length)] + '\n\n' + content;
+                }
+                
+                // Add greetings for new conversations
+                if (chatHistory.children.length <= 1) {
+                    const greetings = ertugrulCharacter.phrases.greetings;
+                    content = greetings[Math.floor(Math.random() * greetings.length)] + '\n\n' + content;
+                }
+            }
+
+            messageContent.innerHTML = content.replace(/\n/g, '<br>');
+            messageDiv.appendChild(messageContent);
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            if (!isUser) {
+                // Use Google TTS for AI responses
+                speakWithGoogleTTS(content);
+            }
+        }
+
+        function setLoading(isLoading) {
+            submitBtn.disabled = isLoading;
+            responseContainer.classList.toggle('hidden', !isLoading);
+            if (isLoading) {
+                responseDiv.textContent = '';
+            }
+        }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const prompt = promptInput.value.trim();
             if (!prompt) return;
 
-            responsePre.textContent = 'Yanıt alınıyor...';
-            form.querySelector('button').disabled = true;
+            // Add user message to chat
+            addMessage(prompt, true);
+            promptInput.value = '';
+            setLoading(true);
 
             try {
                 const res = await fetch(API_URL, {
@@ -40,17 +365,33 @@ title: KAYI Chat
                 });
 
                 if (!res.ok) {
-                    throw new Error('Sunucu hatası: ' + res.status);
+                    throw new Error(`Sunucu hatası: ${res.status}`);
                 }
 
                 const data = await res.json();
-                responsePre.textContent = data.response || 'Yanıt boş geldi.';
+                const response = data.response || 'Yanıt boş geldi.';
+                responseDiv.textContent = response;
+                addMessage(response);
             } catch (err) {
-                responsePre.textContent = 'Hata: ' + err.message;
+                const errorMessage = `Hata: ${err.message}`;
+                responseDiv.textContent = errorMessage;
+                addMessage(errorMessage);
             } finally {
-                form.querySelector('button').disabled = false;
+                setLoading(false);
+            }
+        });
+
+        // Auto-resize textarea
+        promptInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Stop speech when voice is toggled off
+        voiceToggle.addEventListener('change', () => {
+            if (!voiceToggle.checked) {
+                speechSynthesis.cancel();
             }
         });
     });
-
 </script>
